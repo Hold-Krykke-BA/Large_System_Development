@@ -34,6 +34,25 @@ export default class UserFacade {
     }
   }
 
+  static async getUser(userID: string, proj?: object): Promise<any> {
+    const user = await userCollection.findOne(
+      { userID },
+      proj
+    )
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user;
+  }
+
+  static async deleteUser(userID: string): Promise<string> {
+    const status = await userCollection.deleteOne({ userID })
+    if (status.deletedCount === 1) {
+      return "User was deleted";
+    }
+    else throw new Error("Requested delete could not be performed")
+  }
+
   static async getAllUsers(proj?: object): Promise<Array<any>> {
     const all = userCollection.find(
       {},
@@ -41,16 +60,57 @@ export default class UserFacade {
     )
     return all.toArray();
   }
+
+  static async checkUser(userID: string, password: string): Promise<boolean> {
+    let userPassword = "";
+    try {
+      const user = await UserFacade.getUser(userID);
+      userPassword = user.password;
+    } catch (err) { }
+    const status = await bryptCheckAsync(password, userPassword);
+    return status
+  }
 }
 
-async function test() {
-  console.log("testing")
-  const client = await connection();
-  await UserFacade.setDatabase(client)
-  await UserFacade.addUser({ userID: "aoc@cphbusiness.dk", name: "Andrea", password: "secret", isTeacher: true })
-  await UserFacade.addUser({ userID: "cs340@cphbusiness.dk", name: "Camilla", password: "secret", isTeacher: false })
+// async function test() {
+//   console.log("testing")
+//   const client = await connection();
+//   await UserFacade.setDatabase(client)
+//   await UserFacade.addUser({ userID: "aoc@cphbusiness.dk", userName: "Andrea", password: "secret", isTeacher: true })
+//   await UserFacade.addUser({ userID: "cs340@cphbusiness.dk", userName: "Camilla", password: "secret", isTeacher: false })
 
-  const all = await UserFacade.getAllUsers();
-  console.log(all)
-}
-test();
+//   const projection = { projection: { _id: 0, role: 0, password: 0 } }
+//   const userCS = await UserFacade.getUser("cs340@cphbusiness.dk", projection)
+//   console.log('Get Single User', userCS)
+
+//   try {
+//     const passwordStatus1 = await UserFacade.checkUser("cs340@cphbusiness.dk", "secret");
+//     console.log("Expects true: ", passwordStatus1)
+//   } catch (err) {
+//     console.log("Should not get here 1", err)
+//   }
+//   try {
+//     const passwordStatus2 = await UserFacade.checkUser("cs340@cphbusiness.dk", "xxxx");
+//     console.log("Should not get here ", passwordStatus2)
+//   } catch (err) {
+//     console.log("Should get here with failded 2", err)
+//   }
+//   try {
+//     const passwordStatus3 = await UserFacade.checkUser("xxxx@b.dk", "secret");
+//     console.log("Should not get here", passwordStatus3)
+//   } catch (err) {
+//     console.log("hould get here with failded 2", err)
+//   }
+
+//   try {
+//     let statusMsg = await UserFacade.deleteUser("cs340@cphbusiness.dk");
+//     console.log(statusMsg)
+//     await UserFacade.deleteUser("xxxx@b.dk");
+//   } catch (err: any) {
+//     console.log(err.message)
+//   }
+
+//   const all = await UserFacade.getAllUsers();
+//   console.log(all)
+// }
+// test();
