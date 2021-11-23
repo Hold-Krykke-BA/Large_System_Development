@@ -14,6 +14,7 @@ app.use("/", (req, res, next) => {
 })
 app.use(express.json())
 let userAPIRouter = require('./Routes/userRoutes');
+let courseAPIRouter = require('./Routes/courseRoutes');
 
 
 
