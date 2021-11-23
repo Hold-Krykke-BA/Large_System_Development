@@ -15,7 +15,7 @@ app.use("/", (req, res, next) => {
 app.use(express.json())
 let userAPIRouter = require('./Routes/userRoutes');
 let courseAPIRouter = require('./Routes/courseRoutes');
-
+let attendanceCheckAPIRouter = require('./Routes/attendanceCheckRoutes');
 
 
 const PORT = process.env.PORT || 3333;

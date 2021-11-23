@@ -73,14 +73,14 @@ export default class UserService {
 }
 
 async function test() {
-  console.log("testing")
+  console.log('"testing"')
   const client = await connection();
   await UserService.setDatabase(client)
   await UserService.addUser({ userID: "aoc@cphbusiness.dk", userName: "Andrea", password: "secret", isTeacher: true });
   await UserService.addUser({ userID: "rn118@cphbusiness.dk", userName: "Runi", password: "secret", isTeacher: false });
   await UserService.addUser({ userID: "cs340@cphbusiness.dk", userName: "Camilla", password: "secret", isTeacher: false });
 
-  const projection = { projection: { _id: 0, role: 0, password: 0 } }
+  const projection = { projection: { _id: 0, isTeacher: 0, password: 0 } }
   const userCS = await UserService.getUser("cs340@cphbusiness.dk", projection)
   console.log('Get Single User', userCS)
 
