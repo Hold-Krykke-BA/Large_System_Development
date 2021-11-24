@@ -15,6 +15,7 @@ let EXPIRES_AFTER = 600;
 
 export default class AttendanceCheckService {
   static async setDatabase(client: mongo.MongoClient) {
+    console.log("in attendanceservice")
     const dbName = process.env.DB_NAME;
     if (!dbName) {
       throw new Error("Database name not provided")
@@ -122,27 +123,27 @@ export default class AttendanceCheckService {
   }
 }
 
-async function test() {
-  console.log('"testing"')
-  const client = await connection();
-  await AttendanceCheckService.setDatabase(client)
-  let _course = await CourseService.getCourse('sou-si-21');
-  let _code: ICode = { code: 123456, createdAt: new Date() }
-  await AttendanceCheckService.addAttendanceCheck({ attendanceCheckID: "w1", courseID: _course.courseID, students: [], attendanceCheckCode: _code });
-  await AttendanceCheckService.addAttendanceCheck({ attendanceCheckID: "w2", courseID: _course.courseID, students: [], attendanceCheckCode: _code });
-  await AttendanceCheckService.addAttendanceCheck({ attendanceCheckID: "w3", courseID: _course.courseID, students: [], attendanceCheckCode: _code });
-  let getCheck = await AttendanceCheckService.getAttendanceCheckByCode(_code.code);
-  console.log(getCheck)
-  let getStudent = await UserService.getUser('cs340@cphbusiness.dk')
-  let getStudent2 = await UserService.getUser('rn118@cphbusiness.dk')
-  await AttendanceCheckService.addStudentToAttendanceCheck(getCheck, getStudent)
-  await AttendanceCheckService.addStudentToAttendanceCheck(getCheck, getStudent)
-  await AttendanceCheckService.addStudentToAttendanceCheck(getCheck, getStudent2)
-  console.log(await AttendanceCheckService.getAllAttendanceChecks())
-  await AttendanceCheckService.deleteAttendanceCheck('w3')
-  console.log('after delete')
-  console.log(await AttendanceCheckService.getAllAttendanceChecks())
-}
-test();
+// async function test() {
+//   console.log('"testing"')
+//   const client = await connection();
+//   await AttendanceCheckService.setDatabase(client)
+//   let _course = await CourseService.getCourse('sou-si-21');
+//   let _code: ICode = { code: 123456, createdAt: new Date() }
+//   await AttendanceCheckService.addAttendanceCheck({ attendanceCheckID: "w1", courseID: _course.courseID, students: [], attendanceCheckCode: _code });
+//   await AttendanceCheckService.addAttendanceCheck({ attendanceCheckID: "w2", courseID: _course.courseID, students: [], attendanceCheckCode: _code });
+//   await AttendanceCheckService.addAttendanceCheck({ attendanceCheckID: "w3", courseID: _course.courseID, students: [], attendanceCheckCode: _code });
+//   let getCheck = await AttendanceCheckService.getAttendanceCheckByCode(_code.code);
+//   console.log(getCheck)
+//   let getStudent = await UserService.getUser('cs340@cphbusiness.dk')
+//   let getStudent2 = await UserService.getUser('rn118@cphbusiness.dk')
+//   await AttendanceCheckService.addStudentToAttendanceCheck(getCheck, getStudent)
+//   await AttendanceCheckService.addStudentToAttendanceCheck(getCheck, getStudent)
+//   await AttendanceCheckService.addStudentToAttendanceCheck(getCheck, getStudent2)
+//   console.log(await AttendanceCheckService.getAllAttendanceChecks())
+//   await AttendanceCheckService.deleteAttendanceCheck('w3')
+//   console.log('after delete')
+//   console.log(await AttendanceCheckService.getAllAttendanceChecks())
+// }
+// test();
 
 

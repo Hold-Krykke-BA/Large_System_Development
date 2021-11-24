@@ -9,6 +9,7 @@ let userCollection: mongo.Collection;
 
 export default class UserService {
   static async setDatabase(client: mongo.MongoClient) {
+    console.log("in userservice")
     const dbName = process.env.DB_NAME;
     if (!dbName) {
       throw new Error("Database name not provided")
@@ -72,46 +73,46 @@ export default class UserService {
   }
 }
 
-async function test() {
-  console.log('"testing"')
-  const client = await connection();
-  await UserService.setDatabase(client)
-  await UserService.addUser({ userID: "aoc@cphbusiness.dk", userName: "Andrea", password: "secret", isTeacher: true });
-  await UserService.addUser({ userID: "rn118@cphbusiness.dk", userName: "Runi", password: "secret", isTeacher: false });
-  await UserService.addUser({ userID: "cs340@cphbusiness.dk", userName: "Camilla", password: "secret", isTeacher: false });
+// async function test() {
+//   console.log('"testing"')
+//   const client = await connection();
+//   await UserService.setDatabase(client)
+//   await UserService.addUser({ userID: "aoc@cphbusiness.dk", userName: "Andrea", password: "secret", isTeacher: true });
+//   await UserService.addUser({ userID: "rn118@cphbusiness.dk", userName: "Runi", password: "secret", isTeacher: false });
+//   await UserService.addUser({ userID: "cs340@cphbusiness.dk", userName: "Camilla", password: "secret", isTeacher: false });
 
-  const projection = { projection: { _id: 0, isTeacher: 0, password: 0 } }
-  const userCS = await UserService.getUser("cs340@cphbusiness.dk", projection)
-  console.log('Get Single User', userCS)
+//   const projection = { projection: { _id: 0, isTeacher: 0, password: 0 } }
+//   const userCS = await UserService.getUser("cs340@cphbusiness.dk", projection)
+//   console.log('Get Single User', userCS)
 
-  try {
-    const passwordStatus1 = await UserService.checkUser("cs340@cphbusiness.dk", "secret");
-    console.log("Expects true: ", passwordStatus1)
-  } catch (err) {
-    console.log("Should not get here 1", err)
-  }
-  try {
-    const passwordStatus2 = await UserService.checkUser("cs340@cphbusiness.dk", "xxxx");
-    console.log("Should not get here ", passwordStatus2)
-  } catch (err) {
-    console.log("Should get here with failded 2", err)
-  }
-  try {
-    const passwordStatus3 = await UserService.checkUser("xxxx@b.dk", "secret");
-    console.log("Should not get here", passwordStatus3)
-  } catch (err) {
-    console.log("hould get here with failded 2", err)
-  }
+//   try {
+//     const passwordStatus1 = await UserService.checkUser("cs340@cphbusiness.dk", "secret");
+//     console.log("Expects true: ", passwordStatus1)
+//   } catch (err) {
+//     console.log("Should not get here 1", err)
+//   }
+//   try {
+//     const passwordStatus2 = await UserService.checkUser("cs340@cphbusiness.dk", "xxxx");
+//     console.log("Should not get here ", passwordStatus2)
+//   } catch (err) {
+//     console.log("Should get here with failded 2", err)
+//   }
+//   try {
+//     const passwordStatus3 = await UserService.checkUser("xxxx@b.dk", "secret");
+//     console.log("Should not get here", passwordStatus3)
+//   } catch (err) {
+//     console.log("hould get here with failded 2", err)
+//   }
 
-  // try {
-  //   let statusMsg = await UserService.deleteUser("cs340@cphbusiness.dk");
-  //   console.log(statusMsg)
-  //   await UserService.deleteUser("xxxx@b.dk");
-  // } catch (err: any) {
-  //   console.log(err.message)
-  // }
+//   // try {
+//   //   let statusMsg = await UserService.deleteUser("cs340@cphbusiness.dk");
+//   //   console.log(statusMsg)
+//   //   await UserService.deleteUser("xxxx@b.dk");
+//   // } catch (err: any) {
+//   //   console.log(err.message)
+//   // }
 
-  const all = await UserService.getAllUsers();
-  console.log(all)
-}
-test();
+//   const all = await UserService.getAllUsers();
+//   console.log(all)
+// }
+// test();
