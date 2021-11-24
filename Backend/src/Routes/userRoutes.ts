@@ -1,12 +1,6 @@
 import express from "express";
-import connection from "../Services/databaseService"
 const router = express.Router();
 import UserService from "../Services/userService"
-
-(async function setup() {
-  const client = await connection();
-  await UserService.setDatabase(client)
-})()
 
 router.post('/add', async function (req, res, next) {
   try {

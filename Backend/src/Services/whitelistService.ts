@@ -1,7 +1,6 @@
 const path = require('path')
 require('dotenv').config({ path: path.join(process.cwd(), '.env') })
 import * as mongo from "mongodb"
-import connection from "./databaseService"
 import IWhitelist from "../Models/IWhitelist";
 
 let whitelistCollection: mongo.Collection;

@@ -2,6 +2,19 @@ require('dotenv').config();
 import express from "express";
 import path from "path";
 import cors from "cors";
+import connection from "./Services/databaseService"
+import UserService from "./Services/userService"
+import CourseService from "./Services/courseService"
+import AttendanceCheckService from "./Services/attendanceCheckService"
+import WhitelistService from "./Services/whitelistService";
+
+(async function setup() {
+  const client = await connection();
+  await UserService.setDatabase(client)
+  await CourseService.setDatabase(client)
+  await AttendanceCheckService.setDatabase(client)
+  await WhitelistService.setDatabase(client)
+})()
 
 const app = express()
 app.use(cors());

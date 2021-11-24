@@ -1,11 +1,7 @@
 const path = require('path')
 require('dotenv').config({ path: path.join(process.cwd(), '.env') })
 import * as mongo from "mongodb"
-import IUser from "../Models/IUser";
-import IAttendanceCheck from "../Models/IAttendanceCheck";
 import ICourse from "../Models/ICourse";
-import connection from "./databaseService"
-import UserService from "./userService"
 
 let courseCollection: mongo.Collection;
 
@@ -28,8 +24,8 @@ export default class CourseService {
   }
 
   static async addCourse(course: ICourse): Promise<any> {
-    let _students = course.students.filter(s => !s.isTeacher);
-    let _teachers = course.teachers.filter(s => s.isTeacher);
+    let _students = course.students.filter(user => !user.isTeacher);
+    let _teachers = course.teachers.filter(user => user.isTeacher);
     let newcourse = { ...course, students: _students, teachers: _teachers }
     try {
       return await courseCollection.insertOne(newcourse);
@@ -63,11 +59,6 @@ export default class CourseService {
       { projection: proj }
     )
     return all.toArray();
-  }
-
-  static async userIsTeacher(user: IUser): Promise<IUser | null> {
-    if (user.isTeacher) { return user }
-    return null
   }
 }
 

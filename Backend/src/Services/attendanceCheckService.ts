@@ -3,10 +3,6 @@ require('dotenv').config({ path: path.join(process.cwd(), '.env') })
 import * as mongo from "mongodb"
 import IUser from "../Models/IUser";
 import IAttendanceCheck from "../Models/IAttendanceCheck";
-import ICourse from "../Models/ICourse";
-import connection from "./databaseService"
-import UserService from "../Services/userService"
-import CourseService from "../Services/courseService"
 import ICode from "../Models/ICode";
 
 let attendanceCheckCollection: mongo.Collection;

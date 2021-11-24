@@ -3,7 +3,6 @@ require('dotenv').config({ path: path.join(process.cwd(), '.env') })
 import * as mongo from "mongodb"
 import IUser from "../Models/IUser";
 import { bryptAsync, bryptCheckAsync } from "../Util/bcryptHelper"
-import connection from "./databaseService"
 
 let userCollection: mongo.Collection;
 
