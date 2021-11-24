@@ -16,6 +16,7 @@ app.use(express.json())
 let userAPIRouter = require('./Routes/userRoutes');
 let courseAPIRouter = require('./Routes/courseRoutes');
 let attendanceCheckAPIRouter = require('./Routes/attendanceCheckRoutes');
+let whitelistAPIRouter = require('./Routes/whitelistRoutes');
 
 
 const PORT = process.env.PORT || 3333;
