@@ -1,7 +1,6 @@
 const path = require('path')
 require('dotenv').config({ path: path.join(process.cwd(), '.env') })
 import * as mongo from "mongodb"
-import connection from "./databaseService"
 import IWhitelist from "../Models/IWhitelist";
 
 let whitelistCollection: mongo.Collection;
@@ -9,6 +8,7 @@ let _whitelistID: string = 'ip-whitelist';
 
 export default class WhitelistService {
   static async setDatabase(client: mongo.MongoClient) {
+    console.log("in whitelistservice")
     const dbName = process.env.DB_NAME;
     if (!dbName) {
       throw new Error("Database name not provided")
@@ -76,18 +76,18 @@ export default class WhitelistService {
 
 
 
-async function test() {
-  console.log('"testing"')
-  const client = await connection();
-  await WhitelistService.setDatabase(client)
-  console.log('**************************************************************************** get whitelist', await WhitelistService.getWhitelist())
-  await WhitelistService.addToWhitelist('123')
-  await WhitelistService.addToWhitelist('123134')
-  await WhitelistService.addToWhitelist('1345')
-  await WhitelistService.addToWhitelist('12.53.122')
-  await WhitelistService.addToWhitelist('12.313.554')
-  await WhitelistService.addToWhitelist('13.45.576')
-  await WhitelistService.removeFromWhitelist('1345')
+// async function test() {
+//   console.log('"testing"')
+//   const client = await connection();
+//   await WhitelistService.setDatabase(client)
+//   console.log('**************************************************************************** get whitelist', await WhitelistService.getWhitelist())
+//   await WhitelistService.addToWhitelist('123')
+//   await WhitelistService.addToWhitelist('123134')
+//   await WhitelistService.addToWhitelist('1345')
+//   await WhitelistService.addToWhitelist('12.53.122')
+//   await WhitelistService.addToWhitelist('12.313.554')
+//   await WhitelistService.addToWhitelist('13.45.576')
+//   await WhitelistService.removeFromWhitelist('1345')
 
-}
-test();
+// }
+// test();
