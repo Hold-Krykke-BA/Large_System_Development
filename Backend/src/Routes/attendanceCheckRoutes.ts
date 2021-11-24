@@ -1,10 +1,6 @@
 import express from "express";
-import IAttendanceCheck from "../Models/IAttendanceCheck";
-import IUser from "../Models/IUser";
 const router = express.Router();
 import AttendanceCheckService from "../Services/attendanceCheckService"
-
-
 
 
 router.post('/add', async function (req, res, next) {

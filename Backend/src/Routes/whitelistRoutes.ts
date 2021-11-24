@@ -2,7 +2,6 @@ import express from "express";
 const router = express.Router();
 import WhitelistService from "../Services/whitelistService"
 
-
 router.get('/', async function (req: any, res, next) {
   try {
     const whitelist = await WhitelistService.getWhitelist();
