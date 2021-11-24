@@ -97,19 +97,16 @@ export default class AttendanceCheckService {
 
   static async addStudentToAttendanceCheck(attendanceCheck: IAttendanceCheck, student: IUser): Promise<IAttendanceCheck> {
     let _attendanceCheck = await AttendanceCheckService.getAttendanceCheckByCode(attendanceCheck.attendanceCheckCode.code)
-    let checkStudent = _attendanceCheck.students.filter((s: { userID: string; }) => s.userID === student.userID)
+    let checkStudent = _attendanceCheck.students.filter((_student: { userID: string; }) => _student.userID === student.userID)
     if (checkStudent.length) {
       return attendanceCheck
     }
-    attendanceCheck.students.filter(s => s.userID === student.userID)
+    //attendanceCheck.students.filter(s => s.userID === student.userID)
     let _code = await AttendanceCheckService.getCode(attendanceCheck.attendanceCheckCode.code)
     if (_code.code) {
       _attendanceCheck.students.push(student)
-      attendanceCheckCollection.updateOne(
-        { attendanceCheckID: _attendanceCheck.attendanceCheckID },
-        {
-          $set: { 'students': _attendanceCheck.students }
-        }
+      await attendanceCheckCollection.updateOne(
+        { attendanceCheckID: _attendanceCheck.attendanceCheckID }, { $set: { 'students': _attendanceCheck.students } }
       );
     }
     return attendanceCheck;
