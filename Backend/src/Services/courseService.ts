@@ -1,6 +1,7 @@
 const path = require('path')
 require('dotenv').config({ path: path.join(process.cwd(), '.env') })
 import * as mongo from "mongodb"
+import IAttendanceCheck from "../Models/IAttendanceCheck";
 import ICourse from "../Models/ICourse";
 
 let courseCollection: mongo.Collection;
@@ -59,6 +60,19 @@ export default class CourseService {
       { projection: proj }
     )
     return all.toArray();
+  }
+
+  static async addAttendanceCheckToCourse(attendanceCheck: IAttendanceCheck): Promise<any> {
+    let course = await CourseService.getCourse(attendanceCheck.courseID);
+    let checkExistsAttendanceCheck = course.attendanceChecks.filter((_attendancecheck: { attendanceCheckID: string; }) => _attendancecheck.attendanceCheckID === attendanceCheck.attendanceCheckID);
+    if (checkExistsAttendanceCheck.length) {
+      await courseCollection.updateOne({ 'courseID': course.courseID, 'attendanceChecks.attendanceCheckID': attendanceCheck.attendanceCheckID },
+        { $set: { "attendanceChecks.$.students": attendanceCheck.students } })
+
+    } else {
+      course.attendanceChecks.push(attendanceCheck);
+      await courseCollection.updateOne({ courseID: course.courseID }, { $set: { 'attendanceChecks': course.attendanceChecks } })
+    }
   }
 }
 
