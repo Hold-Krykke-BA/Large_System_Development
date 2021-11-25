@@ -1,9 +1,9 @@
 const path = require('path')
 require('dotenv').config({ path: path.join(process.cwd(), '.env') })
 import * as mongo from "mongodb"
-import IUser from "../Models/IUser";
 import IAttendanceCheck from "../Models/IAttendanceCheck";
 import ICode from "../Models/ICode";
+import CourseService from "./courseService";
 import UserService from "./userService";
 
 let attendanceCheckCollection: mongo.Collection;
@@ -22,11 +22,6 @@ export default class AttendanceCheckService {
       attendanceCheckCollection = client.db(dbName).collection("attendanceChecks");
       codeCollection = client.db(dbName).collection("codes");
       await attendanceCheckCollection.createIndex({ attendanceCheckID: 1 }, { unique: true })
-      // try {
-      //   await codeCollection.dropIndex("createdAt_1");
-      // } catch (err: any) {
-      //   console.error("Could not drop index", err)
-      // }
       await codeCollection.createIndex({ createdAt: 1 }, { expireAfterSeconds: EXPIRES_AFTER })
       return client.db(dbName);
 
@@ -40,11 +35,25 @@ export default class AttendanceCheckService {
     await AttendanceCheckService.addCode(attendanceCheck.attendanceCheckCode);
     let _code = await AttendanceCheckService.getCode(attendanceCheck.attendanceCheckCode.code)
     let newAttendanceCheck = { ...attendanceCheck, attendanceCheckCode: _code }
+    // add attendance check to relevant course
     try {
-      return await attendanceCheckCollection.insertOne(newAttendanceCheck);
+      await attendanceCheckCollection.insertOne(newAttendanceCheck);
+      let attendanceCheckWithDbID = await AttendanceCheckService.getAttendanceCheckByID(newAttendanceCheck.attendanceCheckID)
+      await CourseService.addAttendanceCheckToCourse(attendanceCheckWithDbID)
     } catch (err: any) {
       console.error(err.message);
     }
+  }
+
+  private static async getAttendanceCheckByID(attendanceCheckID: string, proj?: object): Promise<any> {
+    const course = await attendanceCheckCollection.findOne(
+      { attendanceCheckID },
+      proj
+    )
+    if (!course) {
+      throw new Error("AttendanceCheck not found");
+    }
+    return course;
   }
 
   static async getAllAttendanceChecks(proj?: object): Promise<Array<any>> {
@@ -105,6 +114,9 @@ export default class AttendanceCheckService {
       await attendanceCheckCollection.updateOne(
         { attendanceCheckID: attendanceCheck.attendanceCheckID }, { $set: { 'students': attendanceCheck.students } }
       );
+      // update attendancecheck on course
+      console.log('ATTENDANCECHECK IN ADDSTUDENT', attendanceCheck.students)
+      await CourseService.addAttendanceCheckToCourse(attendanceCheck)
     }
     return attendanceCheck;
   }
