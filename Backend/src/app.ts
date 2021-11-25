@@ -18,6 +18,7 @@ import WhitelistService from "./Services/whitelistService";
 
 const app = express()
 app.use(cors());
+// app.set('trust proxy', true) 
 
 app.use(express.static(path.join(process.cwd(), "public")))
 
