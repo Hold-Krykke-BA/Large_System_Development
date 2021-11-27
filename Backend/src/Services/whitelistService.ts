@@ -69,7 +69,7 @@ export default class WhitelistService {
         { whitelistID: _whitelistID }, { $set: { 'IPs': updatedArray } }
       );
     }
-    _whitelist.IPs.filter(i => i !== IP)
+    _whitelist.IPs.filter(ip => ip !== IP)
     return _whitelist
   }
 }

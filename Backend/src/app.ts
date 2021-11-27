@@ -17,7 +17,13 @@ import WhitelistService from "./Services/whitelistService";
 })()
 
 const app = express()
+
+
+var requestIp = require('request-ip');
+
+app.use(requestIp.mw())
 app.use(cors());
+app.set('trust proxy', true)
 
 app.use(express.static(path.join(process.cwd(), "public")))
 
@@ -45,5 +51,6 @@ app.use(function (req, res, next) {
 
 const PORT = process.env.PORT || 3333;
 const server = app.listen(PORT)
+
 console.log(`Server started, listening on port: ${PORT}`)
 module.exports.server = server;
