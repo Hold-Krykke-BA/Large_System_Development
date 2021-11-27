@@ -1,14 +1,15 @@
-import IWhitelist from "../Models/IWhitelist";
 import WhitelistService from "../Services/whitelistService";
+var ipRangeCheck = require("ip-range-check");
 
 
 export default async function validate(req: any): Promise<boolean> {
   let whitelist = await WhitelistService.getWhitelist();
-  let studentIP: any = req.headers['x-forwarded-for']?.split(',').shift()
-    || req.socket?.remoteAddress || req.ip;
+  let studentIP = req.socket.remoteAddress || req.ip || req.clientIp;
+  console.log('socket.remoteAddress', req.socket.remoteAddress, '|', 'req.ip', req.ip, '|', 'req.clientIp', req.clientIp);
 
-  console.log('WHITELIST', whitelist.IPs);
-  console.log('STUDENTIP', studentIP);
+  let res = ipRangeCheck(studentIP, whitelist.IPs)
+  console.log('RESULT', res)
 
-  return whitelist.IPs.filter((ip: string) => ip.toString() === studentIP.toString());
+  return res
 }
+
