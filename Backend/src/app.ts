@@ -7,6 +7,7 @@ import UserService from "./Services/userService"
 import CourseService from "./Services/courseService"
 import AttendanceCheckService from "./Services/attendanceCheckService"
 import WhitelistService from "./Services/whitelistService";
+import { ValidationError } from "./Errors/validationError";
 
 (async function setup() {
   const client = await connection();
@@ -47,6 +48,14 @@ app.use(function (req, res, next) {
     res.status(404).json({ code: 404, msg: `this API does not contain ${req.originalUrl}` })
   }
   next()
+})
+
+app.use(function (err: any, req: any, res: any, next: Function) {
+  if (err instanceof (ValidationError)) {
+    const e = <ValidationError>err;
+    return res.status(e.errorCode).send({ code: e.errorCode, message: e.message })
+  }
+  next(err)
 })
 
 const PORT = process.env.PORT || 3333;

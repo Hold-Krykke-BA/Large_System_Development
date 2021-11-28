@@ -13,3 +13,6 @@ export default async function validate(req: any): Promise<boolean> {
   return res
 }
 
+// ::1/32
+// ::1
+// :ffff:127.0.0.1

@@ -1,6 +1,7 @@
 const path = require('path')
 require('dotenv').config({ path: path.join(process.cwd(), '.env') })
 import * as mongo from "mongodb"
+import { ValidationError } from "../Errors/validationError";
 import IAttendanceCheck from "../Models/IAttendanceCheck";
 import ICode from "../Models/ICode";
 import CourseService from "./courseService";
@@ -84,7 +85,7 @@ export default class AttendanceCheckService {
     const _code = await codeCollection.findOne(
       { code }, proj)
     if (!_code) {
-      throw new Error("Code not found");
+      throw new ValidationError("Code not valid");
     }
     return _code;
   }
