@@ -9,7 +9,8 @@ router.post('/add', async function (req, res, next) {
   try {
     let attendanceCheck = req.body.attendancecheck;
     let seconds = req.body.seconds
-    const status = await AttendanceCheckService.addAttendanceCheck(attendanceCheck, seconds)
+    let teacher = req.body.teacher;
+    const status = await AttendanceCheckService.addAttendanceCheck(teacher, attendanceCheck, seconds)
     res.json({ status })
   } catch (err) {
     next(err);

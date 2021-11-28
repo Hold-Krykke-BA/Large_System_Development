@@ -6,6 +6,8 @@ import IAttendanceCheck from "../Models/IAttendanceCheck";
 import ICode from "../Models/ICode";
 import CourseService from "./courseService";
 import UserService from "./userService";
+import newCode from "../Util/generateCode";
+import IUser from "../Models/IUser";
 
 let attendanceCheckCollection: mongo.Collection;
 let codeCollection: mongo.Collection;
@@ -31,16 +33,16 @@ export default class AttendanceCheckService {
     }
   }
 
-  static async addAttendanceCheck(attendanceCheck: IAttendanceCheck, seconds?: number): Promise<any> {
+  static async addAttendanceCheck(teacher: IUser, attendanceCheck: IAttendanceCheck, seconds?: number): Promise<any> {
     AttendanceCheckService.setCodeTTL(seconds)
-    await AttendanceCheckService.addCode(attendanceCheck.attendanceCheckCode);
-    let _code = await AttendanceCheckService.getCode(attendanceCheck.attendanceCheckCode.code)
+    let generatedCode = await AttendanceCheckService.addCode(teacher.userID);
+    let _code = await AttendanceCheckService.getCode(generatedCode.code)
     let newAttendanceCheck = { ...attendanceCheck, attendanceCheckCode: _code }
-    // add attendance check to relevant course
     try {
       await attendanceCheckCollection.insertOne(newAttendanceCheck);
       let attendanceCheckWithDbID = await AttendanceCheckService.getAttendanceCheckByID(newAttendanceCheck.attendanceCheckID)
       await CourseService.addAttendanceCheckToCourse(attendanceCheckWithDbID)
+      return attendanceCheckWithDbID
     } catch (err: any) {
       console.error(err.message);
     }
@@ -91,6 +93,7 @@ export default class AttendanceCheckService {
   }
 
   private static async setCodeTTL(seconds?: number): Promise<void> {
+    console.log("setCodeTTL")
     if (seconds && seconds !== EXPIRES_AFTER) {
       EXPIRES_AFTER = seconds
     }
@@ -115,17 +118,17 @@ export default class AttendanceCheckService {
       await attendanceCheckCollection.updateOne(
         { attendanceCheckID: attendanceCheck.attendanceCheckID }, { $set: { 'students': attendanceCheck.students } }
       );
-      // update attendancecheck on course
-      console.log('ATTENDANCECHECK IN ADDSTUDENT', attendanceCheck.students)
       await CourseService.addAttendanceCheckToCourse(attendanceCheck)
     }
     return attendanceCheck;
   }
 
-  private static async addCode(code: ICode): Promise<any> {
-    let newCode = { ...code, createdAt: new Date() }
+  private static async addCode(teacherID: string): Promise<any> {
+    let generatedCode = await newCode(teacherID)
+    let newcode: ICode = { code: generatedCode, createdAt: new Date() }
     try {
-      return await codeCollection.insertOne(newCode);
+      await codeCollection.insertOne(newcode);
+      return newcode
     } catch (err: any) {
       console.error(err.message);
     }
