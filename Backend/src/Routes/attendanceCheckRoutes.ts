@@ -1,4 +1,5 @@
 import express from "express";
+import { ValidationError } from "../Errors/validationError";
 const router = express.Router();
 import AttendanceCheckService from "../Services/attendanceCheckService"
 import checkIP from "../Util/checkIP";
@@ -53,7 +54,7 @@ router.put('/addstudent', async function (req, res, next) {
       res.json({ status })
     }
     else {
-      throw new Error('IP not recognised')
+      throw new ValidationError('IP not recognised')
     }
   } catch (err) {
     next(err);
