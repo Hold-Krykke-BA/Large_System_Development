@@ -89,7 +89,7 @@ export const useBackendAttendance = () => {
 	/**
 	 * PUT request to add an existing student to an existing attendanceCheck
 	 * @param code code of the attendance check
-	 * @param studentId
+	 * @param studentId id of the student to add to the attendance check
 	 * @returns The attendance check if succesful
 	 */
 	const addStudentToAttendanceCheck = async (code: number, studentID: number) => {
