@@ -1,17 +1,16 @@
 import express from "express";
-import IAttendanceCheck from "../Models/IAttendanceCheck";
-import IUser from "../Models/IUser";
+import { ValidationError } from "../Errors/validationError";
 const router = express.Router();
 import AttendanceCheckService from "../Services/attendanceCheckService"
-
-
+import checkIP from "../Util/checkIP";
 
 
 router.post('/add', async function (req, res, next) {
   try {
     let attendanceCheck = req.body.attendancecheck;
     let seconds = req.body.seconds
-    const status = await AttendanceCheckService.addAttendanceCheck(attendanceCheck, seconds)
+    let teacher = req.body.teacher;
+    const status = await AttendanceCheckService.addAttendanceCheck(teacher, attendanceCheck, seconds)
     res.json({ status })
   } catch (err) {
     next(err);
@@ -51,8 +50,13 @@ router.put('/addstudent', async function (req, res, next) {
   try {
     let code: number = Number(req.body.code);
     let studentID: string = req.body.studentID;
-    const status = await AttendanceCheckService.addStudentToAttendanceCheck(code, studentID)
-    res.json({ status })
+    if (await checkIP(req)) {
+      const status = await AttendanceCheckService.addStudentToAttendanceCheck(code, studentID)
+      res.json({ status })
+    }
+    else {
+      throw new ValidationError('IP not recognised')
+    }
   } catch (err) {
     next(err);
   }

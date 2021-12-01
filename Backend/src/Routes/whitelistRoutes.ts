@@ -1,11 +1,12 @@
 import express from "express";
 const router = express.Router();
 import WhitelistService from "../Services/whitelistService"
-
+import checkIP from "../Util/checkIP"
 
 router.get('/', async function (req: any, res, next) {
   try {
     const whitelist = await WhitelistService.getWhitelist();
+    console.log(await checkIP(req) == true)
     res.json(whitelist);
   } catch (err) {
     next(err)

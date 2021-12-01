@@ -7,6 +7,7 @@ import UserService from "./Services/userService"
 import CourseService from "./Services/courseService"
 import AttendanceCheckService from "./Services/attendanceCheckService"
 import WhitelistService from "./Services/whitelistService";
+import { ValidationError } from "./Errors/validationError";
 
 (async function setup() {
   const client = await connection();
@@ -17,7 +18,13 @@ import WhitelistService from "./Services/whitelistService";
 })()
 
 const app = express()
+
+
+var requestIp = require('request-ip');
+
+app.use(requestIp.mw())
 app.use(cors());
+app.set('trust proxy', true)
 
 app.use(express.static(path.join(process.cwd(), "public")))
 
@@ -43,7 +50,16 @@ app.use(function (req, res, next) {
   next()
 })
 
+app.use(function (err: any, req: any, res: any, next: Function) {
+  if (err instanceof (ValidationError)) {
+    const e = <ValidationError>err;
+    return res.status(e.errorCode).send({ code: e.errorCode, message: e.message })
+  }
+  next(err)
+})
+
 const PORT = process.env.PORT || 3333;
 const server = app.listen(PORT)
+
 console.log(`Server started, listening on port: ${PORT}`)
 module.exports.server = server;
