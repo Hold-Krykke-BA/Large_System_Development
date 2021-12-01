@@ -1,4 +1,4 @@
-export const fetchApi = async <T,>(endpoint: string, method: 'POST' | 'GET' | 'DELETE' = 'GET', body?: BodyInit): Promise<T> => {
+export const fetchApi = async <T,>(endpoint: string, method: 'POST' | 'GET' | 'DELETE' | 'PUT' = 'GET', body?: BodyInit): Promise<T> => {
 	return new Promise((resolve, reject) => {
 		if (endpoint) {
 			const URL = `${process.env.REACT_APP_BACKEND_URL + endpoint}`; //localhost:8080 + /users/1
@@ -9,7 +9,7 @@ export const fetchApi = async <T,>(endpoint: string, method: 'POST' | 'GET' | 'D
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
 				},
-				body,
+				body: body,
 			};
 
 			try {
