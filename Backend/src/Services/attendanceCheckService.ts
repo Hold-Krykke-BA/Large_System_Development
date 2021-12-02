@@ -69,7 +69,7 @@ export default class AttendanceCheckService {
   static async deleteAttendanceCheck(attendanceCheckID: string): Promise<string> {
     const status = await attendanceCheckCollection.deleteOne({ attendanceCheckID })
     if (status.deletedCount === 1) {
-      return "Course was deleted";
+      return "Attendance check was deleted";
     }
     else throw new Error("Requested delete could not be performed")
   }
