@@ -10,6 +10,7 @@ import WhitelistService from "./Services/whitelistService";
 import { ValidationError } from "./Errors/validationError";
 import passport from "passport";
 import passportLocal from "./Util/passportSetup";
+import IUser from "./Models/IUser";
 const jwt = require("jsonwebtoken");
 
 
@@ -37,34 +38,55 @@ app.use('/', (req, res, next) => {
   next()
 })
 
-app.use('/', (req, res, next) => {
-  console.log('hitting authenticate')
-  passport.authenticate(
-    "local", { session: false }, (error: Error, user: any) => {
-      // if (error || !user) {
-      //   console.log('in first if')
-      //   console.log('user', user)
-      //   console.log('error', error)
-      //   res.status(400).json({ error });
-      //   return;
-      // }
-      const payload = { userID: 'userID' };
-      req.login(payload, { session: false }, (error) => {
-        if (error) {
-          console.log('in first if')
-          res.status(400).send({ error });
-        }
-        const token = jwt.sign(payload, "aaa", { //process.env.SECRET, {
-          expiresIn: 30, //tokenExpirationInSeconds,
-        });
-        res.status(200).send({
-          token: token,
-        });
-      });
-    }
-  )(req, res);
-  next()
-})
+// app.post('/login',
+//   passport.authenticate('local', { failureRedirect: '/login' }),
+//   function (req, res) {
+//     res.json({
+//       success: true, // or something to indicate to the frontend that you've identified the user
+//       user: req.user // or something (a token maybe what you'll use later)
+//     });
+//   }
+// );
+
+app.use('/login',
+  passport.authenticate('local', { failureRedirect: '/' }),
+  function (req, res) {
+    console.log('hitting login')
+    res.json({
+      success: true, // or something to indicate to the frontend that you've identified the user
+      user: req.user // or something (a token maybe what you'll use later)
+    });
+  });
+
+//app.use('/login', (req, res, next) => {
+// console.log('hitting authenticate')
+// passport.authenticate(
+//   "local", { session: false }, (error: Error, user: IUser) => {
+//     // if (error || !user) {
+//     //   console.log('in first if')
+//     //   console.log('user', user)
+//     //   console.log('error', error)
+//     //   res.status(400).json({ error });
+//     //   return;
+//     // }
+//     const payload = { userID: user.userID };
+//     console.log('payload', payload)
+//     req.login(payload, { session: false }, (error) => {
+//       if (error) {
+//         console.log('in first if')
+//         res.status(400).send({ error });
+//       }
+//       const token = jwt.sign(payload, "aaa", { //process.env.SECRET, {
+//         expiresIn: 30, //tokenExpirationInSeconds,
+//       });
+//       res.status(200).send({
+//         token: token,
+//       });
+//     });
+//   }
+// )(req, res);
+// next()
+// })
 
 
 app.use(express.json())
