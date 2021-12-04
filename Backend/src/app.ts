@@ -8,6 +8,10 @@ import CourseService from "./Services/courseService"
 import AttendanceCheckService from "./Services/attendanceCheckService"
 import WhitelistService from "./Services/whitelistService";
 import { ValidationError } from "./Errors/validationError";
+import passport from "passport";
+import passportLocal from "./Util/passportSetup";
+const jwt = require("jsonwebtoken");
+
 
 (async function setup() {
   const client = await connection();
@@ -17,13 +21,13 @@ import { ValidationError } from "./Errors/validationError";
   await WhitelistService.setDatabase(client)
 })()
 
+const tokenExpirationInSeconds = Number(process.env.TOKEN_EXPIRATION)
 const app = express()
-
-
 var requestIp = require('request-ip');
-
 app.use(requestIp.mw())
 app.use(cors());
+passportLocal();
+app.use(passport.initialize());
 app.set('trust proxy', true)
 
 app.use(express.static(path.join(process.cwd(), "public")))
@@ -32,7 +36,40 @@ app.use('/', (req, res, next) => {
   console.log('app.ts is logging requests:', req.url)
   next()
 })
+
+app.use('/', (req, res, next) => {
+  console.log('hitting authenticate')
+  passport.authenticate(
+    "local", { session: false }, (error: Error, user: any) => {
+      // if (error || !user) {
+      //   console.log('in first if')
+      //   console.log('user', user)
+      //   console.log('error', error)
+      //   res.status(400).json({ error });
+      //   return;
+      // }
+      const payload = { userID: 'userID' };
+      req.login(payload, { session: false }, (error) => {
+        if (error) {
+          console.log('in first if')
+          res.status(400).send({ error });
+        }
+        const token = jwt.sign(payload, "aaa", { //process.env.SECRET, {
+          expiresIn: 30, //tokenExpirationInSeconds,
+        });
+        res.status(200).send({
+          token: token,
+        });
+      });
+    }
+  )(req, res);
+  next()
+})
+
+
 app.use(express.json())
+
+
 let userAPIRouter = require('./Routes/userRoutes');
 let courseAPIRouter = require('./Routes/courseRoutes');
 let attendanceCheckAPIRouter = require('./Routes/attendanceCheckRoutes');
