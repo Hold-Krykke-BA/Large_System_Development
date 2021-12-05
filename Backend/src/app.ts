@@ -12,7 +12,8 @@ import passport from "passport";
 import passportLocal from "./Util/passportSetup";
 import IUser from "./Models/IUser";
 const jwt = require("jsonwebtoken");
-
+const bodyParser = require("body-parser");
+const tokenExpirationInSeconds = Number(process.env.TOKEN_EXPIRATION);
 
 (async function setup() {
   const client = await connection();
@@ -22,8 +23,9 @@ const jwt = require("jsonwebtoken");
   await WhitelistService.setDatabase(client)
 })()
 
-const tokenExpirationInSeconds = Number(process.env.TOKEN_EXPIRATION)
 const app = express()
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 var requestIp = require('request-ip');
 app.use(requestIp.mw())
 app.use(cors());
@@ -38,59 +40,30 @@ app.use('/', (req, res, next) => {
   next()
 })
 
-// app.post('/login',
-//   passport.authenticate('local', { failureRedirect: '/login' }),
-//   function (req, res) {
-//     res.json({
-//       success: true, // or something to indicate to the frontend that you've identified the user
-//       user: req.user // or something (a token maybe what you'll use later)
-//     });
-//   }
-// );
-
-app.use('/login',
-  passport.authenticate('local', { failureRedirect: '/' }),
-  function (req, res) {
-    console.log('hitting login')
-    res.json({
-      success: true, // or something to indicate to the frontend that you've identified the user
-      user: req.user // or something (a token maybe what you'll use later)
-    });
-  });
-
-//app.use('/login', (req, res, next) => {
-// console.log('hitting authenticate')
-// passport.authenticate(
-//   "local", { session: false }, (error: Error, user: IUser) => {
-//     // if (error || !user) {
-//     //   console.log('in first if')
-//     //   console.log('user', user)
-//     //   console.log('error', error)
-//     //   res.status(400).json({ error });
-//     //   return;
-//     // }
-//     const payload = { userID: user.userID };
-//     console.log('payload', payload)
-//     req.login(payload, { session: false }, (error) => {
-//       if (error) {
-//         console.log('in first if')
-//         res.status(400).send({ error });
-//       }
-//       const token = jwt.sign(payload, "aaa", { //process.env.SECRET, {
-//         expiresIn: 30, //tokenExpirationInSeconds,
-//       });
-//       res.status(200).send({
-//         token: token,
-//       });
-//     });
-//   }
-// )(req, res);
-// next()
-// })
-
+app.post('/login', (req, res, next) => {
+  passport.authenticate(
+    "local", { session: false }, (error: Error, user: any) => {
+      if (error || !user) {
+        res.status(400).json({ error });
+        return;
+      }
+      const payload = { userID: user.userID, isTeacher: user.isTeacher };
+      req.login(payload, { session: false }, (error) => {
+        if (error) {
+          res.status(400).send({ error });
+        }
+        const token = jwt.sign(payload, process.env.SECRET, {
+          expiresIn: tokenExpirationInSeconds,
+        });
+        res.status(200).send({
+          token: token,
+        });
+      });
+    }
+  )(req, res);
+})
 
 app.use(express.json())
-
 
 let userAPIRouter = require('./Routes/userRoutes');
 let courseAPIRouter = require('./Routes/courseRoutes');
