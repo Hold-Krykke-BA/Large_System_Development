@@ -20,7 +20,7 @@ export const useAuthorization: RequestHandler = (req: AuthRequest, res, next) =>
 			// console.log('decodedToken', decoded);
 			if (_err) {
 				console.error('Authorization error', _err);
-				const err = new AuthorizationError('Token invalid: ' + _err.message , 403);
+				const err = new AuthorizationError('Token invalid: ' + _err.message, 403);
 				return next(err);
 			}
 

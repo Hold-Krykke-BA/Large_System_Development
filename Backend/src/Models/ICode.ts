@@ -1,4 +1,4 @@
 export default interface ICode {
-  createdAt: Date,
-  code: number
+	createdAt: Date;
+	code: number;
 }
