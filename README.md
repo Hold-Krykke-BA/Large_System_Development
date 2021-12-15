@@ -11,7 +11,7 @@ _Exam project_
 ### Sequence diagram
 ![image](https://github.com/Hold-Krykke-BA/Large_System_Development/blob/main/Diagrams/Sequence.PNG)
 
-### NoSQL Collections
+### NoSQL Documents
 ![image](https://github.com/Hold-Krykke-BA/Large_System_Development/blob/main/Diagrams/NoSQLducuments.PNG)
 
 
