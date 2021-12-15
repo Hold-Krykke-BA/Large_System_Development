@@ -8,7 +8,7 @@ _Exam project_
 **[Assignment Description and Requirements](https://github.com/Hold-Krykke-BA/Large_System_Development/blob/main/assignment2.pdf)**
 
 ## Diagrams
-### Sequence diagram
+### Sequence Diagram
 ![image](https://github.com/Hold-Krykke-BA/Large_System_Development/blob/main/Diagrams/Sequence.PNG)
 
 ### NoSQL Documents
