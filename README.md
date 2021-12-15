@@ -7,7 +7,10 @@ _Exam project_
 
 ## Diagrams
 ### Sequence diagram
+![image](https://github.com/Hold-Krykke-BA/Large_System_Development/blob/main/Diagrams/Sequence.PNG)
 
 ### NoSQL Collections
+![image](https://github.com/Hold-Krykke-BA/Large_System_Development/blob/main/Diagrams/NoSQLducuments.PNG)
+
 
 ### Class Diagram
