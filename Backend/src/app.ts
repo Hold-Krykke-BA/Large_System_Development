@@ -19,11 +19,11 @@ const bodyParser = require('body-parser');
 const tokenExpirationInSeconds = Number(process.env.TOKEN_EXPIRATION);
 
 (async function setup() {
-	const client = await connection();
-	await UserService.setDatabase(client);
-	await CourseService.setDatabase(client);
-	await AttendanceCheckService.setDatabase(client);
-	await WhitelistService.setDatabase(client);
+  const client = await connection();
+  await UserService.setDatabase(client);
+  await CourseService.setDatabase(client);
+  await AttendanceCheckService.setDatabase(client);
+  await WhitelistService.setDatabase(client);
 })();
 
 const app = express();
@@ -41,29 +41,29 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 app.get('/', (req, res, next) => res.send('<h1> Hello World </h1>'));
 
 app.use('/', (req, res, next) => {
-	console.log('app.ts is logging requests:', req.url);
-	next();
+  console.log('app.ts is logging requests:', req.url);
+  next();
 });
 
 app.post('/login', (req, res, next) => {
-	passport.authenticate('local', { session: false }, (error: Error, user: any) => {
-		if (error || !user) {
-			res.status(400).json({ error });
-			return;
-		}
-		const payload: jwtAuthPayload = { userID: user.userID, isTeacher: user.isTeacher };
-		req.login(payload, { session: false }, (error) => {
-			if (error) {
-				res.status(400).send({ error });
-			}
-			const token = jwt.sign(payload, process.env.SECRET, {
-				expiresIn: tokenExpirationInSeconds,
-			});
-			res.status(200).send({
-				token: token,
-			});
-		});
-	})(req, res);
+  passport.authenticate('local', { session: false }, (error: Error, user: any) => {
+    if (error || !user) {
+      res.status(400).json({ error });
+      return;
+    }
+    const payload: jwtAuthPayload = { userID: user.userID, isTeacher: user.isTeacher };
+    req.login(payload, { session: false }, (error) => {
+      if (error) {
+        res.status(400).send({ error });
+      }
+      const token = jwt.sign(payload, process.env.SECRET, {
+        expiresIn: tokenExpirationInSeconds,
+      });
+      res.status(200).send({
+        token: token,
+      });
+    });
+  })(req, res);
 });
 
 app.use(express.json());
@@ -79,21 +79,21 @@ app.use('/rolecall/attendance', useAuthorization, attendanceCheckAPIRouter);
 app.use('/rolecall/whitelist', useAuthorization, whitelistAPIRouter);
 
 app.use(function (req, res, next) {
-	if (req.originalUrl.startsWith('/rolecall')) {
-		res.status(404).json({ code: 404, msg: `this API does not contain ${req.originalUrl}` });
-	}
-	next();
+  if (req.originalUrl.startsWith('/rolecall')) {
+    res.status(404).json({ code: 404, msg: `this API does not contain ${req.originalUrl}` });
+  }
+  next();
 });
 
 app.use(function (err: any, req: any, res: any, next: Function) {
-	if (err instanceof ValidationError) {
-		const e = <ValidationError>err;
-		return res.status(e.errorCode).send({ code: e.errorCode, message: e.message });
-	} else if (err instanceof AuthorizationError) {
-		const e = <AuthorizationError>err;
-		return res.status(e.errorCode).send({ code: e.errorCode, message: e.message });
-	}
-	next(err);
+  if (err instanceof ValidationError) {
+    const e = <ValidationError>err;
+    return res.status(e.errorCode).send({ code: e.errorCode, message: e.message });
+  } else if (err instanceof AuthorizationError) {
+    const e = <AuthorizationError>err;
+    return res.status(e.errorCode).send({ code: e.errorCode, message: e.message });
+  }
+  next(err);
 });
 
 const PORT = process.env.PORT || 3333;
