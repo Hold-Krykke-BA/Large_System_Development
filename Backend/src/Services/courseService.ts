@@ -1,79 +1,74 @@
-const path = require('path')
-require('dotenv').config({ path: path.join(process.cwd(), '.env') })
-import * as mongo from "mongodb"
-import IAttendanceCheck from "../Models/IAttendanceCheck";
-import ICourse from "../Models/ICourse";
+const path = require('path');
+require('dotenv').config({ path: path.join(process.cwd(), '.env') });
+import * as mongo from 'mongodb';
+import IAttendanceCheck from '../Models/IAttendanceCheck';
+import ICourse from '../Models/ICourse';
 
 let courseCollection: mongo.Collection;
 
 export default class CourseService {
-  static async setDatabase(client: mongo.MongoClient) {
-    console.log("in courseservice")
-    const dbName = process.env.DB_NAME;
-    if (!dbName) {
-      throw new Error("Database name not provided")
-    }
-    try {
-      await client.connect();
-      courseCollection = client.db(dbName).collection("courses");
-      await courseCollection.createIndex({ courseID: 1 }, { unique: true })
-      return client.db(dbName);
+	static async setDatabase(client: mongo.MongoClient) {
+		console.log('in courseservice');
+		const dbName = process.env.DB_NAME;
+		if (!dbName) {
+			throw new Error('Database name not provided');
+		}
+		try {
+			await client.connect();
+			courseCollection = client.db(dbName).collection('courses');
+			await courseCollection.createIndex({ courseID: 1 }, { unique: true });
+			return client.db(dbName);
+		} catch (err) {
+			console.error('Could not create connect', err);
+		}
+	}
 
-    } catch (err) {
-      console.error("Could not create connect", err)
-    }
-  }
+	static async addCourse(course: ICourse): Promise<any> {
+		let _students = course.students.filter((user) => !user.isTeacher);
+		let _teachers = course.teachers.filter((user) => user.isTeacher);
+		let newcourse = { ...course, students: _students, teachers: _teachers };
+		try {
+			return await courseCollection.insertOne(newcourse);
+		} catch (err: any) {
+			console.error(err.message);
+		}
+	}
 
-  static async addCourse(course: ICourse): Promise<any> {
-    let _students = course.students.filter(user => !user.isTeacher);
-    let _teachers = course.teachers.filter(user => user.isTeacher);
-    let newcourse = { ...course, students: _students, teachers: _teachers }
-    try {
-      return await courseCollection.insertOne(newcourse);
-    } catch (err: any) {
-      console.error(err.message);
-    }
-  }
+	static async getCourse(courseID: string, proj?: object): Promise<any> {
+		const course = await courseCollection.findOne({ courseID }, proj);
+		if (!course) {
+			throw new Error('Course not found');
+		}
+		return course;
+	}
 
-  static async getCourse(courseID: string, proj?: object): Promise<any> {
-    const course = await courseCollection.findOne(
-      { courseID },
-      proj
-    )
-    if (!course) {
-      throw new Error("Course not found");
-    }
-    return course;
-  }
+	static async deleteCourse(courseID: string): Promise<string> {
+		const status = await courseCollection.deleteOne({ courseID });
+		if (status.deletedCount === 1) {
+			return 'Course was deleted';
+		} else throw new Error('Requested delete could not be performed');
+	}
 
-  static async deleteCourse(courseID: string): Promise<string> {
-    const status = await courseCollection.deleteOne({ courseID })
-    if (status.deletedCount === 1) {
-      return "Course was deleted";
-    }
-    else throw new Error("Requested delete could not be performed")
-  }
+	static async getAllCourses(proj?: object): Promise<Array<any>> {
+		const all = courseCollection.find({}, { projection: proj });
+		return all.toArray();
+	}
 
-  static async getAllCourses(proj?: object): Promise<Array<any>> {
-    const all = courseCollection.find(
-      {},
-      { projection: proj }
-    )
-    return all.toArray();
-  }
-
-  static async addAttendanceCheckToCourse(attendanceCheck: IAttendanceCheck): Promise<any> {
-    let course = await CourseService.getCourse(attendanceCheck.courseID);
-    let checkExistsAttendanceCheck = course.attendanceChecks.filter((_attendancecheck: { attendanceCheckID: string; }) => _attendancecheck.attendanceCheckID === attendanceCheck.attendanceCheckID);
-    if (checkExistsAttendanceCheck.length) {
-      await courseCollection.updateOne({ 'courseID': course.courseID, 'attendanceChecks.attendanceCheckID': attendanceCheck.attendanceCheckID },
-        { $set: { "attendanceChecks.$.students": attendanceCheck.students } })
-
-    } else {
-      course.attendanceChecks.push(attendanceCheck);
-      await courseCollection.updateOne({ courseID: course.courseID }, { $set: { 'attendanceChecks': course.attendanceChecks } })
-    }
-  }
+	static async addAttendanceCheckToCourse(attendanceCheck: IAttendanceCheck): Promise<any> {
+		let course = await CourseService.getCourse(attendanceCheck.courseID);
+		let checkExistsAttendanceCheck = course.attendanceChecks.filter(
+			(_attendancecheck: { attendanceCheckID: string }) => _attendancecheck.attendanceCheckID === attendanceCheck.attendanceCheckID,
+		);
+		if (checkExistsAttendanceCheck.length) {
+			await courseCollection.updateOne(
+				{ courseID: course.courseID, 'attendanceChecks.attendanceCheckID': attendanceCheck.attendanceCheckID },
+				{ $set: { 'attendanceChecks.$.students': attendanceCheck.students } },
+			);
+		} else {
+			course.attendanceChecks.push(attendanceCheck);
+			await courseCollection.updateOne({ courseID: course.courseID }, { $set: { attendanceChecks: course.attendanceChecks } });
+		}
+	}
 }
 
 // async function test() {
@@ -84,7 +79,6 @@ export default class CourseService {
 //   testTeachers.push(
 //     await UserService.getUser("cs340@cphbusiness.dk"), await UserService.getUser("aoc@cphbusiness.dk")
 //   );
-
 
 //   let testStudents = Array<IUser>();
 //   testStudents = await UserService.getAllUsers()
