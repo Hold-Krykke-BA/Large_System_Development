@@ -15,4 +15,5 @@ _Exam project_
 ![image](https://github.com/Hold-Krykke-BA/Large_System_Development/blob/main/Diagrams/NoSQLducuments.PNG)
 
 
-### Class Diagram
+### System Overview
+![image](https://github.com/Hold-Krykke-BA/Large_System_Development/blob/main/Diagrams/SystemOverview.PNG)
