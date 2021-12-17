@@ -31,7 +31,7 @@ The app entrypoint is in `app.ts`
 ## Running
 
 1. `nodemon`
-2. Access application endpoints through a program like Postman.
+2. Access application endpoints through a program like Postman (_**the frontend is not finished or in a runnable state**_)
 
 ### Example application flow
 The databases have had some base data added.
