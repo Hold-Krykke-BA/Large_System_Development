@@ -24,7 +24,19 @@ If the file is already there in your copy of the project, just continue.
 
 1. `cd Backend`
 2. `npm i`
+3. Create an `.env` file in the root of the Backend on containing the following:
+```
+CONNECTION=mongodb+srv://<username>:<password>@<cluster>.<identifier>.mongodb.net/rolecall?retryWrites=true&w=majority
 
+DB_NAME="rolecall"
+USER_COLLECTION="users"
+
+PORT=3000
+
+TOKEN_EXPIRATION=300
+SECRET="<your-own-jwt-secret>"
+
+```
 The app entrypoint is in `app.ts`
 
 ## Running
