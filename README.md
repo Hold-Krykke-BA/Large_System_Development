@@ -77,25 +77,33 @@ These routes are for the Attendance Check service - it serves CRUD operations fo
 | /rolecall/attendance/all         | GET    |                                       | Get all attendanceChecks                                                          | isLoggedIn  isTeacher    |
 | /rolecall/attendance/{code}      | GET    | pathParam: attendanceCheckCode        | Get attendanceCheck by its code                                                   | isLoggedIn BelongsToUser |
 | /rolecall/attendance/remove/{id} | DELETE | pathParam: id                         | Delete attendanceCheck by its ID                                                  | isLoggedIn  isTeacher    |
-| /rolecall/attendance/addstudent  | PUT    | { studentID, code }                   | Add student to attendanceCheck by studentID and attendanceCheckCode               | isLoggedIn  isTeacher    |
+| /rolecall/attendance/addstudent  | PUT    | { studentID, code }                   | Add student to attendanceCheck by studentID and attendanceCheckCode               | isLoggedIn  isTeacher checkIP   |
 
 #### Course Routes
 These routes are for the Course service - it serves CRUD operations for a Course
 
-```diff
-- routes here
-```
+| URL                              | METHOD | FORMAT              | PURPOSE                                                             | LIMITS                   |
+|----------------------------------|--------|---------------------|---------------------------------------------------------------------|--------------------------|
+| /rolecall/courses/add            | POST   | { Course }          | Add a new Course.                                                   | isLoggedIn  isTeacher    |
+| /rolecall/courses/all            | GET    |                     | Get all Courses                                                     | isLoggedIn  isTeacher    |
+| /rolecall/courses/{id}           | GET    | pathParam: courseID | Get Course by its ID                                                | isLoggedIn BelongsToUser |
+| /rolecall/courses/remove/{id}    | DELETE | pathParam: courseID | Delete Course by its ID                                             | isLoggedIn  isTeacher    |
 
 #### User Routes
 These routes are for the User service - it serves CRUD operations for a User.
 
-```diff
-- routes here
-```
+| URL                             | METHOD | FORMAT              | PURPOSE                                                             | LIMITS                   |
+|---------------------------------|--------|---------------------|---------------------------------------------------------------------|--------------------------|
+| /rolecall/users/add             | POST   | { User }            | Add a new User.                                                     | isLoggedIn  isTeacher    |
+| /rolecall/users/all             | GET    |                     | Get all Users                                                       | isLoggedIn  isTeacher    |
+| /rolecall/users/{id}            | GET    | pathParam: userID   | Get User by its ID                                                  | isLoggedIn BelongsToUser |
+| /rolecall/users/remove/{id}     | DELETE | pathParam: userID   | Delete User by its ID                                               | isLoggedIn  isTeacher    |
 
 #### Whitelist Routes
 These routes are for the whitelist service - it serves CRUD operations for the Whitelist.
 
-```diff
-- routes here
-```
+| URL                               | METHOD | FORMAT        | PURPOSE                  | LIMITS                       |
+|-----------------------------------|--------|---------------|--------------------------|------------------------------|
+| /rolecall/whitelist/              | GET    |               | Get whitelist            | isLoggedIn isTeacher checkIP |
+| /rolecall/whitelist/addip         | PUT    | { ip }        | Add IP to the whitelist  | isLoggedIn  isTeacher        |
+| /rolecall/whitelist/removeip/{ip} | DELETE | pathParam: IP | Delete IP from whitelist | isLoggedIn  isTeacher        |
