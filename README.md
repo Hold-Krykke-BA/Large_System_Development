@@ -24,7 +24,8 @@ If the file is already there in your copy of the project, just continue.
 
 1. `cd Backend`
 2. `npm i`
-3. Create an `.env` file in the root of the Backend on containing the following:
+3. Install nodemon globally `npm install -g nodemon`
+4. Create an `.env` file in the root of the Backend on containing the following:
 ```
 CONNECTION=mongodb+srv://<username>:<password>@<cluster>.<identifier>.mongodb.net/rolecall?retryWrites=true&w=majority
 
@@ -41,8 +42,7 @@ The app entrypoint is in `app.ts`
 
 ## Running
 
-1.
-2. Install nodemon globally `npm install -g nodemon` and then run it by typing `nodemon` or `npm run dev:watch`
+1. `nodemon` or `npm run dev:watch`
 3. Access application endpoints through a program like Postman (_**the frontend is not finished or in a runnable state**_)
 
 ### Example application flow
