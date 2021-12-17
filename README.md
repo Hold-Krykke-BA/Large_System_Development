@@ -41,8 +41,9 @@ The app entrypoint is in `app.ts`
 
 ## Running
 
-1. `nodemon`
-2. Access application endpoints through a program like Postman (_**the frontend is not finished or in a runnable state**_)
+1.
+2. Install nodemon globally `npm install -g nodemon` and then run it by typing `nodemon` or `npm run dev:watch`
+3. Access application endpoints through a program like Postman (_**the frontend is not finished or in a runnable state**_)
 
 ### Example application flow
 The databases have had some base data added.
