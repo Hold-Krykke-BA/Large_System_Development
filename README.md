@@ -1,5 +1,4 @@
 # Large System Development - Exam Project
-_Exam project_
 
 ## Contributors
 - _[Rúni Vedel Niclasen - cph-rn118](https://github.com/Runi-VN)_
